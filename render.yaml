@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: cimoy-parent-api
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8080
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: CSRF_SECRET
+        generateValue: true
+      - key: KIDS_API_KEY
+        generateValue: true
+      - key: ALLOWED_KIDS_ORIGINS
+        value: "*"
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: cimoy-redis
+          property: connectionString
+      - key: DATABASE_URL
+        fromService:
+          type: postgres
+          name: cimoy-db
+          property: connectionString
+    healthCheckPath: /health
+    autoDeploy: true
+    github:
+      repo: dnscat-tim/cimoy-parent-api
+      branch: main
+      deploy: true
+
+  - type: redis
+    name: cimoy-redis
+    ipAllowList: []
+    plan: free
+
+  - type: postgres
+    name: cimoy-db
+    plan: free
+    ipAllowList: [] 
